@@ -1,13 +1,15 @@
 ---
 title: "AI Reports"
 permalink: /ai-reports/
-layout: single
+layout: archive
 author_profile: true
 sidebar:
   nav: sidebar_nav
 ---
 
-Choose a category:
-- [Perception](/ai-reports/perception/)
-- [MLLM](/ai-reports/mllm/)
-- [Image & Video Generation](/ai-reports/image-video-generation/)
+{% include base_path %}
+
+{% assign posts = site.ai_reports | sort: 'date' | reverse %}
+{% for post in posts %}
+  {% include archive-single.html %}
+{% endfor %}
