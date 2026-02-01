@@ -22,7 +22,7 @@ repository               : "ldj7672/ldj7672.github.io"   # IMPORTANT: your repo
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "profile.png"
+  avatar           : "profile_dj.png"
   name             : "Dongjin Lee"
   pronouns         : # example: "she/her"  
   bio              : "ML・Vision Research Engineer working on Image, Video Generation"
