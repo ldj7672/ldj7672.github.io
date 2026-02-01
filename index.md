@@ -28,3 +28,12 @@ sidebar:
   {% include archive-single.html %}
 {% endfor %}
 {% endif %}
+
+{% comment %}Fundamentals 섹션{% endcomment %}
+{% assign fundamentals = site.fundamentals | sort: 'date' | reverse %}
+{% if fundamentals.size > 0 %}
+<h2>Fundamentals</h2>
+{% for post in fundamentals %}
+  {% include archive-single.html %}
+{% endfor %}
+{% endif %}

@@ -31,3 +31,6 @@ sidebar_nav:
         url: /ai-reports/mllm/
       - title: "Image & Video Generation"
         url: /ai-reports/image-video-generation/
+
+  - title: "Fundamentals"
+    url: /fundamentals/
