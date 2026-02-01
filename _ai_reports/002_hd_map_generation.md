@@ -49,7 +49,7 @@ category: perception
 
 ![](https://velog.velcdn.com/images/ldj923/post/2e6385a9-c404-4056-a447-be20737ea8a7/image.png)
 
-#### ✅ 주요 단계
+### ✅ 주요 단계
 **입력 데이터 준비**
 - 입력 데이터는 **멀티 카메라 이미지**로, 일반적으로 front, front-left, front-right, back, back-left, back-right 등의 시점이 포함됨.
 - 또한 **camera intrinsic/extrinsic**와 시간 정보를 반영하기 위한 이전 프레임 BEV feature도 필요.
@@ -96,7 +96,7 @@ BEVFormer는 BEV 공간 생성의 효율성과 표현력을 동시에 확보했�
 - 특히 task-agnostic하게 설계된 디코더 덕분에, 새로운 태스크를 추가할 때 구조 변경 없이도 통합 학습이 가능하다.
 - nuScenes 기준으로 NDS와 mIoU 모두 기존 대비 향상되었다.
 
-#### 구체적인 방법
+### 구체적인 방법
 MaskBEV는 BEVFormer 기반의 query-centric 구조를 확장하여, **각 BEV query가 다양한 태스크에 대한 정보를 동시에 추론**할 수 있도록 설계되었다. 구체적으로는, **BEV query와 태스크를 식별하는 mask token을 결합**하여 입력하면, Transformer 디코더는 이 task-aware query들을 병렬로 처리하면서, 객체 검출, 시맨틱 분할, 차선 추출 등의 다양한 결과를 한 번에 예측한다.
 
 예를 들어, 동일한 BEV 공간 내 (x, y) 위치에 대해

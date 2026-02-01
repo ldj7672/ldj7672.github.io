@@ -23,7 +23,7 @@ repository               : "ldj7672/ldj7672.github.io"   # IMPORTANT: your repo
 author:
   # Biographic information
   avatar           : "profile_dj.png"
-  name             : "Dongjin Lee"
+  name             : "Jin"
   pronouns         : # example: "she/her"  
   bio              : "ML・Vision Research Engineer working on Image, Video Generation"
   location         : "gyeonggi-do, KR"
