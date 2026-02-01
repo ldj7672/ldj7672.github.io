@@ -1,8 +1,13 @@
 ---
 title: "AI Projects"
 permalink: /ai-projects/
-layout: single
+layout: archive
 author_profile: true
 ---
 
-Coming soon.
+{% include base_path %}
+
+{% assign posts = site.ai_projects | sort: 'date' | reverse %}
+{% for post in posts %}
+  {% include archive-single.html %}
+{% endfor %}

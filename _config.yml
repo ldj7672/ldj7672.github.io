@@ -231,6 +231,12 @@ collections:
   talks:
     output: true
     permalink: /:collection/:path/
+  ai_projects:
+    output: true
+    permalink: /ai-projects/:path/
+  ai_reports:
+    output: true
+    permalink: /ai-reports/:path/
 
 
 # These settings control how pages and collections are included in the site
@@ -288,6 +294,24 @@ defaults:
       layout: talk
       author_profile: true
       share: true
+  # _ai_projects
+  - scope:
+      path: ""
+      type: ai_projects
+    values:
+      layout: single
+      author_profile: true
+      share: true
+      comments: true
+  # _ai_reports
+  - scope:
+      path: ""
+      type: ai_reports
+    values:
+      layout: single
+      author_profile: true
+      share: true
+      comments: true
 
 
 # Sass/SCSS
