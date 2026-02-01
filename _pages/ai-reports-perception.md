@@ -3,6 +3,8 @@ title: "Perception"
 permalink: /ai-reports/perception/
 layout: archive
 author_profile: true
+sidebar:
+  nav: sidebar_nav
 ---
 
 {% include base_path %}

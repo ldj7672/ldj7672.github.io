@@ -3,6 +3,8 @@ title: "Image & Video Generation"
 permalink: /ai-reports/image-video-generation/
 layout: archive
 author_profile: true
+sidebar:
+  nav: sidebar_nav
 ---
 
 {% include base_path %}

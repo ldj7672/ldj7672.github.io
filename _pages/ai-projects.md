@@ -3,6 +3,8 @@ title: "AI Projects"
 permalink: /ai-projects/
 layout: archive
 author_profile: true
+sidebar:
+  nav: sidebar_nav
 ---
 
 {% include base_path %}

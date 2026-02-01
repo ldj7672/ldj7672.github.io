@@ -3,6 +3,8 @@ title: "MLLM"
 permalink: /ai-reports/mllm/
 layout: archive
 author_profile: true
+sidebar:
+  nav: sidebar_nav
 ---
 
 {% include base_path %}

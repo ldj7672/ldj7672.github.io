@@ -26,7 +26,7 @@ author:
   name             : "Dongjin Lee"
   pronouns         : # example: "she/her"  
   bio              : "ML・Vision Research Engineer working on Image, Video Generation"
-  location         : "Seoul, KR"
+  location         : "gyeonggi-do, KR"
   employer         : # optional
   uri              : # URL
   email            : # optional
@@ -55,7 +55,7 @@ author:
 
   # Social media
   artstation       : # Username
-  bluesky          : "bsky.app" # Replace this with you Bluesky username
+  bluesky          : # Username
   facebook         : # Username
   flickr           : # Username
   foursquare       : # Username
@@ -259,6 +259,14 @@ defaults:
     values:
       layout: single
       author_profile: true
+      sidebar:
+        nav: sidebar_nav
+  # archive layout pages
+  - scope:
+      path: ""
+      type: pages
+      layout: archive
+    values:
       sidebar:
         nav: sidebar_nav
   # _teaching
