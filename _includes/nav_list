@@ -4,6 +4,12 @@
 <nav class="nav__list">
   {% if page.sidebar.title %}<header><h4 class="nav__title" style="padding: 0;">{{ page.sidebar.title }}</h4></header>{% endif %}
   <ul>
+    {% comment %}전체 게시글 메뉴 추가{% endcomment %}
+    {% assign total_posts = site.ai_projects.size | plus: site.ai_reports.size %}
+    <li>
+      <a href="{{ base_path }}/"><span class="nav__sub-title">전체 게시글 ({{ total_posts }})</span></a>
+    </li>
+    
     {% for nav in navigation %}
       <li>
         {% if nav.url %}
@@ -14,7 +20,15 @@
             {% assign domain = base_path %}
           {% endif %}
 
-          <a href="{{ domain }}{{ nav.url }}"><span class="nav__sub-title">{{ nav.title }}</span></a>
+          {% comment %}글 개수 계산{% endcomment %}
+          {% assign count = 0 %}
+          {% if nav.url == "/ai-projects/" %}
+            {% assign count = site.ai_projects.size %}
+          {% elsif nav.url == "/ai-reports/" %}
+            {% assign count = site.ai_reports.size %}
+          {% endif %}
+
+          <a href="{{ domain }}{{ nav.url }}"><span class="nav__sub-title">{{ nav.title }}{% if count > 0 %} ({{ count }}){% endif %}</span></a>
         {% else %}
           <span class="nav__sub-title">{{ nav.title }}</span>
         {% endif %}
@@ -36,7 +50,17 @@
               {% assign active = "" %}
             {% endif %}
 
-            <li><a href="{{ domain }}{{ child.url }}" class="{{ active }}">{{ child.title }}</a></li>
+            {% comment %}하위 카테고리 글 개수 계산{% endcomment %}
+            {% assign child_count = 0 %}
+            {% if child.url == "/ai-reports/perception/" %}
+              {% assign child_count = site.ai_reports | where: "category", "perception" | size %}
+            {% elsif child.url == "/ai-reports/mllm/" %}
+              {% assign child_count = site.ai_reports | where: "category", "mllm" | size %}
+            {% elsif child.url == "/ai-reports/image-video-generation/" %}
+              {% assign child_count = site.ai_reports | where: "category", "image-video-generation" | size %}
+            {% endif %}
+
+            <li><a href="{{ domain }}{{ child.url }}" class="{{ active }}">{{ child.title }}{% if child_count > 0 %} ({{ child_count }}){% endif %}</a></li>
           {% endfor %}
         </ul>
         {% endif %}

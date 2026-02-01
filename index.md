@@ -1,20 +1,30 @@
 ---
 title: "Home"
 permalink: /
-layout: single
+layout: archive
 author_profile: true
 sidebar:
   nav: sidebar_nav
 ---
 
-Welcome to Jin's Doodle!
+{% include base_path %}
 
-This is a technical blog focused on AI Projects and Reports.
+# 전체 게시글
 
-## Quick Links
+{% comment %}AI Projects 섹션{% endcomment %}
+{% assign ai_projects = site.ai_projects | sort: 'date' | reverse %}
+{% if ai_projects.size > 0 %}
+<h2>AI Projects</h2>
+{% for post in ai_projects %}
+  {% include archive-single.html %}
+{% endfor %}
+{% endif %}
 
-- [AI Projects](/ai-projects/) - Explore my AI projects
-- [AI Reports](/ai-reports/) - Read technical reports and analysis
-  - [Perception](/ai-reports/perception/)
-  - [MLLM](/ai-reports/mllm/)
-  - [Image & Video Generation](/ai-reports/image-video-generation/)
+{% comment %}AI Reports 섹션{% endcomment %}
+{% assign ai_reports = site.ai_reports | sort: 'date' | reverse %}
+{% if ai_reports.size > 0 %}
+<h2>AI Reports</h2>
+{% for post in ai_reports %}
+  {% include archive-single.html %}
+{% endfor %}
+{% endif %}
