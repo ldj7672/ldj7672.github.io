@@ -17,3 +17,17 @@ main:
         url: /ai-reports/mllm/
       - title: "Image & Video Generation"
         url: /ai-reports/image-video-generation/
+
+sidebar_nav:
+  - title: "AI Projects"
+    url: /ai-projects/
+
+  - title: "AI Reports"
+    url: /ai-reports/
+    children:
+      - title: "Perception"
+        url: /ai-reports/perception/
+      - title: "MLLM"
+        url: /ai-reports/mllm/
+      - title: "Image & Video Generation"
+        url: /ai-reports/image-video-generation/
