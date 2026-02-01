@@ -9,10 +9,10 @@
 # Basic Site Settings
 locale                   : "en-US"
 site_theme               : "default" # The available themes options are "default", "air", "sunrise", "mint", "dirt" and "contrast"
-title                    : "Dongjin Lee"
+title                    : "Jin's Doodle"
 title_separator          : "-"
-name                     : &name "Dongjin Lee"
-description              : &description "Dongjin Lee's technical blog"
+name                     : &name "Jin"
+description              : &description "Jin's technical blog"
 url                      : "https://ldj7672.github.io"  # IMPORTANT: your GitHub Pages user site URL
 baseurl                  : ""                           # IMPORTANT: keep empty for user site
 repository               : "ldj7672/ldj7672.github.io"   # IMPORTANT: your repo
@@ -25,7 +25,7 @@ author:
   avatar           : "profile.png"
   name             : "Dongjin Lee"
   pronouns         : # example: "she/her"  
-  bio              : "AI/ML engineer working on computer vision and generative models."
+  bio              : "ML・Vision Research Engineer working on Image, Video Generation"
   location         : "Seoul, KR"
   employer         : # optional
   uri              : # URL
