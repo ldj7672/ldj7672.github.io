@@ -259,6 +259,8 @@ defaults:
     values:
       layout: single
       author_profile: true
+      sidebar:
+        nav: sidebar_nav
   # _teaching
   - scope:
       path: ""
