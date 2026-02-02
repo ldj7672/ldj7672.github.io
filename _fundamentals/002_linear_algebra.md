@@ -45,7 +45,7 @@ tags:
 
 ### 1.2.3. 전치 행렬(Transpose)
 - **전치 행렬**은 행렬 $\mathbf{A}$의 행과 열을 교환한 행렬로, $\mathbf{A}^T$로 표기한다.  
-  - e.g. $\mathbf{A} = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$이면, $\mathbf{A}^T = \begin{bmatrix} 1 & 3 \\ 2 & 4 \end{bmatrix}$.  
+  - e.g. $2 \times 2$ 행렬 $\mathbf{A} = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$이면, $\mathbf{A}^T = \begin{bmatrix} 1 & 3 \\ 2 & 4 \end{bmatrix}$.  
 - 전치 연산은 **행렬 곱셈의 순서를 바꾸는 데 유용**합니다.  
   - e.g. $(\mathbf{A} \cdot \mathbf{B})^T = \mathbf{B}^T \cdot \mathbf{A}^T$
 - **활용 예시**  
@@ -74,9 +74,7 @@ $$
 $$  
 여기서 $\mathbf{I}$는 단위 행렬(Identity Matrix)로, 대각선 성분이 모두 1이고 나머지 성분은 0인 $n \times n$ 크기의 행렬이다. 역행렬을 가진 행렬은 **가역 행렬(Invertible Matrix)**이라고 하며, 역행렬은 연립 방정식 풀이나 선형 회귀에서 가중치 계산에 사용된다.
 
-$
-\mathbf{A} = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix}$일 때, $\mathbf{A}^{-1} = \frac{1}{\text{det}(\mathbf{A})} \begin{bmatrix} 4 & -1 \\ -3 & 2 \end{bmatrix} 
-$
+$2 \times 2$ 행렬 $\mathbf{A} = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix}$일 때, $\mathbf{A}^{-1} = \frac{1}{\text{det}(\mathbf{A})} \begin{bmatrix} 4 & -1 \\ -3 & 2 \end{bmatrix}$
 
 
 ### 1.4.3. 행렬식(Determinant)
@@ -89,7 +87,7 @@ $$
 2. **선형 변환의 크기**: 행렬식은 선형 변환에서 면적(2D), 부피(3D)와 같은 크기의 변화를 나타낸다.  
 3. **특수 행렬 판별**: $\text{det}(\mathbf{A}) = 0$이면 $\mathbf{A}$는 특이 행렬(Singular Matrix)로, 역행렬을 가지지 않는다.  
 
-$\mathbf{A} = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix}$일 때, $\text{det}(\mathbf{A}) = (2)(4) - (1)(3) = 8 - 3 = 5$  
+$2 \times 2$ 행렬 $\mathbf{A} = \begin{bmatrix} 2 & 1 \\ 3 & 4 \end{bmatrix}$일 때, $\text{det}(\mathbf{A}) = (2)(4) - (1)(3) = 8 - 3 = 5$  
 
 
 ## 1.5. 특이값 분해  
@@ -133,7 +131,7 @@ $$
 $$  
 
 - 벡터 성분의 절대값 합으로 계산된다.  
-- e.g. $\mathbf{x} = [1, -2, 3]$이라면, $\|\mathbf{x}\|_1 = |1| + |-2| + |3| = 6$  
+- e.g. $\mathbf{x} = [1, -2, 3]$이라면, $\left\|\mathbf{x}\right\|_1 = \left|1\right| + \left|-2\right| + \left|3\right| = 6$  
 
 ### 1.7.2. L2 Norm
 $$  
@@ -141,7 +139,7 @@ $$
 $$  
     
 - (유클리드 거리): 벡터 성분의 제곱합에 대한 제곱근으로 계산된다.  
-- e.g. $\mathbf{x} = [1, -2, 3]$이라면, $\|\mathbf{x}\|_2 = \sqrt{1^2 + (-2)^2 + 3^2} = \sqrt{14}$  
+- e.g. $\mathbf{x} = [1, -2, 3]$이라면, $\left\|\mathbf{x}\right\|_2 = \sqrt{1^2 + (-2)^2 + 3^2} = \sqrt{14}$  
 
 **활용**  
 - **Normalization**: 데이터를 정규화할 때 Norm을 사용하여 벡터의 크기를 1로 조정한다.  
