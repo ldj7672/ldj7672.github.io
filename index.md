@@ -1,5 +1,5 @@
 ---
-title: "Home"
+title: "Recent Posts"
 permalink: /
 layout: archive
 author_profile: true
@@ -8,8 +8,6 @@ sidebar:
 ---
 
 {% include base_path %}
-
-# 전체 게시글
 
 {% comment %}AI Projects 섹션{% endcomment %}
 {% assign ai_projects = site.ai_projects | sort: 'date' | reverse %}
