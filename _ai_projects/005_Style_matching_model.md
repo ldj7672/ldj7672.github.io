@@ -1,4 +1,4 @@
-
+---
 title: "이미지 기반 스타일 매칭 ML 모델 개발"
 description: "VLM 기반 soft labeling + metric learning으로 '어울림'을 학습한 인테리어 스타일 매칭 시스템"
 date: 2025-09-01
@@ -9,6 +9,7 @@ tags:
   - Computer Vision
   - Recommendation
   - Retrieval
+---
 
 ![](figures/2026-02-06-21-07-25.png)
 
