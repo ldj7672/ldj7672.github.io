@@ -1,5 +1,5 @@
 ---
-title: "텍스처와 표면 반사율을 활용한 재질 인식 연구"
+title: "[Research] 텍스처와 표면 반사율을 활용한 재질 인식 연구"
 date: 2024-11-24
 categories:
   - AI Projects

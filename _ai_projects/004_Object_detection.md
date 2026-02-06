@@ -1,5 +1,5 @@
 ---
-title: "객체 검출 모델 고도화 & 최적화"
+title: "[Project] 객체 검출 모델 고도화 및 최적화"
 date: 2024-11-24
 categories:
   - AI Projects
