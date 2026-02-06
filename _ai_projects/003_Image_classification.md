@@ -1,5 +1,5 @@
 ---
-title: "이미지 분류 모델, 효율적으로 개발하기"
+title: "이미지 분류 모델 효율적으로 개발하기"
 date: 2024-11-24
 categories:
   - AI Projects
