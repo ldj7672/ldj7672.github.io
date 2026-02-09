@@ -1,6 +1,6 @@
 ---
 title: "이미지 편집 기술 최신 연구 동향 (2022-2025)"
-date: 2025-02-02
+date: 2025-12-01
 categories:
   - AI Reports
 tags:
