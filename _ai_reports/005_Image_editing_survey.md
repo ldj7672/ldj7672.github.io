@@ -19,7 +19,7 @@ category: image-video-generation
 
 본 리포트에서 다루는 시점까지의 연구 동향은 **원하는 것만 비용 효율적으로 정밀하게 편집**하는 방향으로 발전해왔다. Inversion-free, prompt-less 편집, 구조 일관성 유지, 멀티 이미지 정합성, 객체 단위 정밀 편집 등이 핵심 키워드였다. 본 리포트에서는 이러한 발전 과정을 연도별로 추적하며, 각 기법의 기술적 특징과 한계를 분석한다.
 
-## **2. 개체 개념 주입 기법 (2022)**
+## **2. Concept Injection (2022)**
 
 ### **2.1 DreamBooth (2022)**
 
@@ -65,7 +65,7 @@ Textual Inversion은 새로운 개념을 **단 하나의 임베딩 벡터**로 �
 - 복잡한 객체나 세부 디테일 표현에 한계가 있다.
 - 학습된 임베딩이 특정 모델에 종속적이다.
 
-## **3. 조건 기반 편집 기법 (2023)**
+## **3. Conditional Editing (2023)**
 
 ### **3.1 ControlNet (2023)**
 
@@ -154,7 +154,7 @@ Imagic은 실제 사진을 기반으로 **잠재 공간을 최적화**해 텍스
 - 최적화 과정이 시간이 오래 걸린다.
 - 복잡한 편집에는 여러 번의 최적화가 필요하다.
 
-## **4. Inversion-free 편집 기법 (2024)**
+## **4. Inversion-free Editing (2024)**
 
 ### **4.1 PixelMan (2024)**
 
@@ -209,7 +209,7 @@ Edicho는 **training-free diffusion 기반 방법**으로, 여러 in-the-wild �
 - 두 이미지 간의 대응 관계가 명확하지 않으면 성능이 저하된다.
 - 복잡한 장면에서는 계산 비용이 증가한다.
 
-## **5. Intrinsic 기반 편집 기법 (2025)**
+## **5. Intrinsic-based Editing (2025)**
 
 ### **5.1 IntrinsicEdit (2025)**
 
@@ -235,7 +235,7 @@ IntrinsicEdit은 intrinsic-image latent space에서 작동하는 생성적 워�
 - Intrinsic 분해 과정이 복잡하고 계산 비용이 높다.
 - 모든 이미지에 대해 정확한 intrinsic 분해가 가능한 것은 아니다.
 
-## **6. 최신 연구 방향성**
+## **6. Research Directions**
 
 본 리포트에서 다루는 시점(2022-2025년 초)까지의 이미지 편집 연구는 다음과 같은 방향으로 발전해왔다.
 
