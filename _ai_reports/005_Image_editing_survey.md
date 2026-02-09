@@ -55,7 +55,9 @@ DreamBooth는 소수의 이미지(3~5장)를 활용하여 기존 diffusion 모�
 
 ![](/figures/image_editing/textual_inversion.png)
 
-Textual Inversion은 새로운 개념을 **단 하나의 임베딩 벡터**로 표현하는 기법이다. DreamBooth와 달리 모델의 전체 가중치를 업데이트하지 않고, 텍스트 임베딩 공간에서 새로운 토큰만 학습한다.
+Textual Inversion은 특정 개체/스타일 같은 “새로운 개념”을 **단 하나(또는 소수)의 텍스트 임베딩 벡터**로 표현하도록 학습하는 personalization 기법이다. DreamBooth가 diffusion 모델의 가중치까지 업데이트해 개념을 더 강하게 주입하는 반면, Textual Inversion은 **모델 가중치는 freeze** 한 채 **텍스트 인코더의 특정 토큰 임베딩만 최적화**한다. 즉, “@my_dog” 같은 새 토큰을 프롬프트에 넣었을 때 모델이 그 토큰을 특정 시각적 개념(대상/스타일)로 해석하도록 텍스트 공간을 조정하는 방식이다.
+
+이 방식은 editing에서도 유효한데, 편집을 할 때 “원본 이미지의 정체성(특정 인물/상품)을 유지한 채 배경·속성만 바꾸기” 같은 요구가 자주 등장하기 때문이다. Textual Inversion으로 학습한 토큰은 프롬프트 기반 편집(예: 기존 이미지를 기반으로 한 img2img/inpainting)에서 **대상의 아이덴티티를 프롬프트로 안정적으로 고정**하는 역할을 한다. 다만 임베딩만으로 표현하는 만큼, 세부 디테일이나 복잡한 개체를 완벽히 재현하는 능력은 DreamBooth 대비 제한적일 수 있다.
 
 **핵심**
 - 특정 객체를 나타내는 새로운 텍스트 토큰(예: "@sofaA")의 임베딩 벡터를 학습한다.
@@ -79,12 +81,12 @@ Textual Inversion은 새로운 개념을 **단 하나의 임베딩 벡터**로 �
 
 ![](/figures/image_editing/controlnet.png)
 
-ControlNet은 Stable Diffusion의 UNet 중간 feature map에 **Condition Hint**를 제공하는 기법이다. 픽셀 기반 구조 정보를 활용해 객체의 형태, 위치, 윤곽선 등을 유지한 채 이미지를 생성한다.
+ControlNet은 기존 Stable Diffusion의 UNet을 크게 바꾸지 않으면서, edge/depth/pose 같은 **픽셀-정렬 조건(condition hint)**을 denoising 과정에 주입해 생성 결과의 구조를 강하게 제어하는 방법이다. 핵심은 기존 T2I UNet은 그대로 두고(보통 freeze), condition을 처리하는 branch 네트워크를 추가해 UNet의 중간 feature에 condition 신호를 더해준다는 점이다.
 
 **핵심**
-- Edge map, Depth map, Pose map, Segmentation map 등 구조 정보를 입력으로 받는다.
-- 기존 UNet의 가중치를 freeze하고, ControlNet 모듈만 학습한다.
-- Zero convolution을 통해 학습 초기에 기존 성능을 유지하면서 점진적으로 조건 정보를 반영한다.
+- 입력 조건(예: canny edge, depth, pose)은 별도 인코더/컨볼루션 블록을 통해 처리되어, UNet의 여러 해상도 단계(resolution stage)에 대응하는 **control feature**로 변환된다.
+- ControlNet branch는 구조적으로 UNet과 유사한 블록을 갖고, 각 stage마다 생성된 control feature를 원본 UNet의 대응 stage에 **residual 형태로 주입**한다.
+- 이 주입은 개념적으로는 `h_l <- h_l + α * c_l` 같은 **element-wise add**로 이해해도 무방하다. (실제 구현은 stage/블록마다 주입 위치와 스케일링이 조금씩 다를 수 있지만, 핵심은 “원본 feature에 control residual을 더한다”는 구조)
 
 **장점**
 - 기존 모델의 성능을 유지하면서 구조 보존이 가능하다.
@@ -101,7 +103,7 @@ ControlNet은 Stable Diffusion의 UNet 중간 feature map에 **Condition Hint**�
 
 ![](/figures/image_editing/GLIGEN.png)
 
-GLIGEN은 기존 diffusion pipeline에 **Object Injection Module**을 추가하여, 텍스트 + 바운딩 박스 + 이미지 참조를 조합해 객체 배치를 가능하게 하는 기법이다.
+GLIGEN은 기존 diffusion pipeline에 **grounded generation**을 위한 **Object Injection Module**을 추가해, 텍스트로 무엇을 만들지뿐 아니라 어디에(바운딩 박스) 무엇을(객체/개념) 넣을지를 동시에 제어하는 기법이다. 핵심은 단순히 박스 위치를 조건으로 주는 수준을 넘어, **박스별(region-wise)로 텍스트/참조 정보를 UNet의 토큰/feature에 주입**해 해당 영역에서의 생성 과정을 직접 가이드한다는 점이다. 결과적으로 open-set 객체 배치와 장면 구성에 강하다.
 
 **핵심**
 - 텍스트 프롬프트, 바운딩 박스 좌표, 참조 이미지를 동시에 입력으로 받는다.
@@ -125,7 +127,7 @@ GLIGEN은 기존 diffusion pipeline에 **Object Injection Module**을 추가하�
 
 ![](/figures/image_editing/prompt-to-prompt.png)
 
-Prompt-to-Prompt는 텍스트 프롬프트의 일부를 바꾸되, diffusion 과정에서 **cross-attention map을 주입/고정**해 이미지의 **레이아웃을 보존하는 training-free** 편집 기법이다. 텍스트만으로 국소/전역 편집을 하면서도 원본의 구조를 유지한다는 문제의식을 정면으로 다룬 대표 작업이다.
+Prompt-to-Prompt는 텍스트 프롬프트의 일부를 바꾸되, diffusion 과정에서 **cross-attention map을 주입/고정**해 이미지의 **레이아웃을 보존하는 training-free** 편집 기법이다. Training-free임에도 편집 성능이 강해지는 이유는, diffusion 모델에서 **cross-attention이 사실상 텍스트 토큰이 이미지 공간에 배치되는 ‘레이아웃 신호’**로 작동하기 때문이다. 일반적으로 프롬프트를 바꾸면 attention 패턴이 함께 흔들리면서 구도까지 변형되기 쉬운데, P2P는 원본 생성 과정에서 얻은 **token별 cross-attention map을 저장**한 뒤, 편집 시 “바꾸지 말아야 할 토큰”의 attention을 **고정/재주입**한다. 결과적으로 모델을 재학습하지 않고도, 동일한 UNet으로 **레이아웃(구조)은 유지한 채 의미 변화만 국소적으로 반영**되도록 추론 과정을 제어한다.
 
 **핵심**
 - 원본 이미지의 cross-attention map을 저장한다.
@@ -192,7 +194,9 @@ MasaCtrl은 diffusion 과정에서 **self-attention을 상호 제어(mutual self
 
 ![](/figures/image_editing/null_text_inversion.png)
 
-Null-text Inversion은 diffusion 기반 실사 편집에서 가장 큰 병목인 **"원본 이미지를 얼마나 정확히 재구성(inversion)하느냐"**를 크게 개선한 기법이다. 기존 inversion이 프롬프트/CFG 설정에 민감하고 재구성 품질이 낮으면, 편집 시 원본 구조가 쉽게 붕괴되는 문제가 있었다. Null-text Inversion은 **CFG의 unconditional branch(=null-text embedding)** 를 이미지별로 최적화해, **reconstruction fidelity**를 끌어올리면서도 편집 여지를 유지한다.
+Null-text Inversion은 diffusion 기반 실사 편집에서 가장 큰 병목인 **원본 이미지를 얼마나 정확히 재구성(inversion)하느냐**를 크게 개선한 기법이다. 실사 편집은 보통 (1) 원본 이미지를 diffusion의 latent trajectory로 되돌린 뒤(inversion), (2) 프롬프트를 바꿔 denoising을 다시 수행하는 방식으로 진행된다. 그런데 이 과정에서 inversion 단계에서 원본이 조금만 틀어져도(재구성 오차), 편집 단계에서 그 오차가 누적되어 **질감이 무너지거나, 배경/구조가 흔들리거나, 원치 않는 영역이 변형**되는 문제가 쉽게 발생한다. 특히 CFG(Classifier-Free Guidance)를 사용하는 경우, conditional/unconditional 두 경로의 조합이 민감하게 작동해 원본 재구성과 편집 자유도를 동시에 만족시키기 어렵다.
+
+Null-text Inversion의 핵심은 inversion을 할 때 **latent를 과도하게 최적화하기보다**, CFG에서 사용되는 **unconditional branch의 텍스트 임베딩(=null-text embedding)** 을 이미지별·스텝별로 최적화한다는 점이다. 직관적으로는 “편집에 사용하는 프롬프트(conditional)는 유지하되, 원본을 정확히 재현할 수 있도록 **unconditional 쪽을 이미지에 맞게 보정**해 주는 것”에 가깝다. 이렇게 얻은 step-wise null-text는 재구성 fidelity를 크게 끌어올리면서도, 이후 편집 단계에서는 conditional prompt만 바꿔 **원본 구조는 붙잡고 변화만 유도**할 수 있게 해준다.
 
 **핵심**
 - 원본 이미지를 DDIM inversion 등으로 latent trajectory로 되돌린다.
@@ -214,7 +218,11 @@ Null-text Inversion은 diffusion 기반 실사 편집에서 가장 큰 병목인
 
 ![](/figures/image_editing/imagic.png)
 
-Imagic은 실제 사진을 기반으로 **잠재 공간을 최적화**해 텍스트 편집을 가능하게 하는 기법이다. 결과 이미지는 기존 사진과 매우 유사하면서도 텍스트 지시 사항을 반영한다.
+Imagic은 실제 사진을 기반으로 **latent와 텍스트 임베딩을 함께 최적화**해 텍스트 기반 편집을 수행하는 기법이다. 단순히 프롬프트를 바꾸는 것만으로는 실사 편집에서 원본 구조(배경·구도·정체성)가 쉽게 흔들리는데, Imagic은 먼저 프롬프트/임베딩 조합이 원본 이미지를 가장 잘 재현하도록 최적화된 표현을 찾은 뒤, 그 지점에서 편집 방향으로 이동하는 방식으로 **원본 보존과 편집 반영을 동시에** 노린다.
+
+구체적으로는 (1) 주어진 원본 이미지에 대해 **텍스트 임베딩을 이미지에 맞게 보정**하여 재구성 fidelity를 높이고, (2) 편집 프롬프트를 적용할 때는 원본에서 크게 벗어나지 않도록 **보정된 임베딩과 latent를 기준점(anchor)으로 유지**하며 denoising을 진행한다. 결과적으로 원본에 최대한 붙어 있으면서도, 지시된 의미 변화만 반영되는 편집을 만들기 쉬워 실사 사진 편집에서 안정적인 결과를 낸다.
+
+다만 최적화 기반 접근이라 이미지마다 반복 최적화가 필요해 추론 시간이 늘고, 변화 폭이 큰 편집(대규모 객체 교체/레이아웃 변경)에서는 보존-변형 trade-off가 여전히 존재한다.
 
 **핵심**
 - 원본 이미지를 latent space로 인코딩한다.
@@ -238,7 +246,9 @@ Imagic은 실제 사진을 기반으로 **잠재 공간을 최적화**해 텍스
 
 ![](/figures/image_editing/instructpix2pix.png)
 
-InstructPix2Pix는 "prompt engineering"을 넘어 **자연어 지시(instruction)** 로 이미지를 편집하는 패러다임을 대중화했다. 특히 핵심은 **대규모 편집 데이터셋을 사람이 라벨링하지 않고 합성으로 만든 뒤**, 그 데이터로 모델을 학습해 **one-shot forward pass 편집**을 가능하게 만든 점이다. 즉, 온라인 최적화나 inversion 품질에 덜 의존하는 방향으로 편집을 확장했다.
+InstructPix2Pix는 prompt engineering을 넘어 **자연어 지시(instruction)** 로 이미지를 편집하는 패러다임을 대중화했다. 이 작업의 핵심은 편집을 추론 시점의 최적화(inversion/online optimization) 문제로 두지 않고, **[입력 이미지, 지시문, 편집 결과]** 형태의 대규모 학습 데이터로 **instruction-following 편집 모델을 직접 학습**했다는 점이다. 특히 사람이 픽셀 단위로 편집 정답을 라벨링하기 어렵다는 현실적 제약을, **기성 T2I 모델과 자동 생성된 지시문(LLM 기반)을 이용한 합성 데이터 생성**으로 우회했다.
+
+모델은 학습을 통해 “원본을 가능한 유지하면서 지시된 변화만 적용”하는 편집 규칙을 내재화하고, 추론 시에는 **단 한 번의 forward pass**로 편집 결과를 생성한다. 이로써 결과 품질이 inversion 품질이나 최적화 안정성에 덜 좌우되며, 다양한 편집 타입을 하나의 자연어 지시로 커버할 수 있게 되었다. 즉 InstructPix2Pix는 편집의 병목을 inversion을 얼마나 잘하느냐에서 instruction-following 데이터/학습을 얼마나 잘하느냐로 초점을 바꾼 대표 사례다.
 
 **핵심**
 - (데이터 생성) 입력 이미지에 대해 LLM이 편집 지시문을 만들고, T2I/이미지 편집 모델로 "편집 결과"를 합성해 (input, instruction, output) 트리플을 구성한다.
@@ -262,7 +272,8 @@ InstructPix2Pix는 "prompt engineering"을 넘어 **자연어 지시(instruction
 
 ![](/figures/image_editing/pixelman.png)
 
-PixelMan은 **inversion-free이고 training-free인** diffusion 기반 이미지 편집 기법으로, 텍스트 프롬프트 없이도 이미지 내 객체를 픽셀 수준으로 복제·이동·삽입할 수 있다.
+PixelMan은 **inversion-free + training-free** 설정에서, 텍스트 프롬프트 없이도 이미지 내 객체를 **복제/이동/삽입**할 수 있도록 설계된 diffusion 기반 편집 기법이다. 핵심은 객체 편집의 본질은 새로 그리는 게 아니라, **이미지 안에 이미 존재하는 픽셀/패턴을 원하는 위치에 옮기고 자연스럽게 blending하는 것**이라는 점이다. PixelMan은 이 과정을 diffusion denoising 중간 단계에서 직접 수행해, 별도의 inversion이나 추가 학습 없이도 높은 구조 일관성을 확보한다.
+
 
 **핵심**
 - 픽셀 공간에서 객체의 복사본을 생성하고, 효율적인 샘플링 방식을 사용하여 조작된 객체를 목표 위치에 자연스럽게 통합한다.
@@ -286,7 +297,7 @@ PixelMan은 **inversion-free이고 training-free인** diffusion 기반 이미지
 
 ![](/figures/image_editing/edicho.png)
 
-Edicho는 **training-free diffusion 기반 방법**으로, 여러 in-the-wild 이미지에서 일관된 이미지 편집을 수행한다. 핵심 설계 원칙은 암묵적 attention feature에 의존하기보다는 **명시적 이미지 대응 관계(explicit image correspondence)**를 사용하여 편집을 지시하는 것이다.
+Edicho는 **training-free diffusion 기반**으로, in-the-wild 환경(포즈/조명/배경/카메라 시점이 제각각인 이미지들)에서도 **일관된 편집 결과**를 얻는 것을 목표로 한다. 핵심 설계 원칙은 모델 내부 attention이 알아서 정합성을 맞춰주길 기대하는 것 대신, **이미지 간의 명시적 대응 관계(explicit correspondence)** 를 먼저 추정하고 그 정보를 denoising 과정에 직접 주입해 **무엇을 유지하고 어디를 바꿔야 하는지**를 안정적으로 고정한다는 점이다. 즉, Edicho는 편집을 단순한 single-image I2I 문제가 아니라, **cross-image consistency** 제약이 있는 문제로 명시화한다.
 
 **핵심**
 - **Attention manipulation module**과 **refined classifier-free guidance (CFG) denoising strategy**를 사용한다.
@@ -337,31 +348,50 @@ IntrinsicEdit은 intrinsic-image latent space에서 작동하는 생성적 워�
 
 ## **9. Research Directions**
 
-본 리포트에서 다루는 시점(2022–2025년 초)까지의 이미지 편집 연구는 다음과 같은 방향으로 발전해왔다.
+본 리포트에서 다루는 시점(2022–2025년 초)까지의 이미지 편집 연구는, “**원본 보존**(fidelity/identity/structure)과 **편집 반영**(editability/instruction fidelity)을 어떻게 분리·제어할 것인가”라는 축을 중심으로 빠르게 전개되었다. 2022년에는 **개인화(Concept Injection)** 와 **실사 편집을 위한 inversion/최적화**가 편집의 출발점이 되었고, 2023년에는 **공간적 제어(grounded/spatial control)** 와 **training-free 제어(attention/feature control)** 로 “원하는 변화만” 설계 가능하게 만드는 방향이 강화되었다. 2024–2025로 오면서는 단일 이미지 편집을 넘어서 **멀티 이미지 정합성(consistency)**, **in-the-wild 강건성**, 그리고 **조명·재질 같은 속성 단위의 분해/조작(intrinsic)** 으로 초점이 이동하며, 편집을 “픽셀 단위 결과”가 아니라 “제약을 만족하는 생성 과정”으로 다루는 경향이 뚜렷해졌다.
 
-### **9.1 Inversion-free & Low-prompt 편집**
+아래는 이러한 흐름을 대표하는 연구 방향들이다.
 
-기존 이미지를 latent space로 되돌리는 inversion 과정의 부담을 줄이거나, inversion 없이도 편집을 수행하는 방향이 강화되었다. PixelMan은 inversion-free로 객체 조작을 수행하며 편집 속도와 효율을 크게 향상시켰다. Edicho 역시 이미지 간 명시적 대응 관계(correspondence)를 활용하는 방식으로, 프롬프트/attention에 대한 암묵적 의존을 낮추고 다양한 환경(in-the-wild)에서의 일관성을 강화하려는 흐름을 보여준다.
+### **9.1 Minimal Inversion & Lightweight Editing**
 
-### **9.2 구조 일관성 유지 + 멀티 이미지 정합성**
+실사 편집에서 inversion은 고품질 보존을 위한 강력한 도구였지만, 이미지별 최적화 비용과 민감도(CFG/step/프롬프트)에 의해 **확장성의 병목**이 되었다. 이에 따라 연구는 inversion을 “필요하면 쓰되 최소화”하거나, 아예 inversion 없이도 편집을 가능하게 하는 방향으로 발전했다.  
+- **PixelMan**은 inversion-free로 객체 복제/이동/삽입을 수행하며, diffusion을 “새로 그리기”보다 “자연스러운 융합(harmonization)”에 활용해 효율을 끌어올렸다.  
+- **Edicho**는 프롬프트/attention에 대한 암묵적 의존을 줄이고, 이미지 간 **명시적 correspondence**를 제어 신호로 사용해 in-the-wild에서의 안정성을 강화한다.  
+결과적으로 “편집을 하려면 inversion이 필수”라는 전제를 약화시키고, **경량·고속·대규모 적용**을 가능하게 하는 흐름이 형성되었다.
 
-편집 과정에서 단일 이미지 품질뿐 아니라, 여러 이미지(또는 여러 뷰/상황) 간의 정합성을 함께 보장하는 방향으로 발전했다. Edicho는 cross-image correspondence를 활용해 복수 이미지 편집 시나리오에서 일관된 결과를 생성할 수 있음을 보여준다.
+### **9.2 Cross-Image Consistency**
 
-### **9.3 속성(재질·조명) 단위 정밀 편집**
+초기 연구가 “단일 이미지에서 구조를 유지한 채 편집”에 집중했다면, 후반부로 갈수록 **여러 이미지(여러 컷/여러 뷰/여러 조건)** 에서 동일한 객체·장면의 정체성을 유지하는 문제가 핵심으로 떠올랐다. 이는 실제 제품(앨범 편집, 쇼핑/인테리어, 크리에이티브 워크플로우)에서 매우 빈번한 요구이기도 하다.  
+- **Edicho**는 cross-image correspondence로 “무엇을 동일하게 유지해야 하는지”를 명시화하고, 이를 diffusion 과정의 제약으로 반영해 일관성을 확보하려는 대표 사례다.  
+이 방향은 이후 **multi-reference 편집**, 시퀀스/비디오 정합성, 편집 전후의 “동일성 보장”으로 자연스럽게 확장된다.
 
-편집 대상이 “객체 자체”뿐 아니라, **조명·재질·반사·색감** 같은 속성으로 확장되며 더 정교한 제어가 가능해졌다. IntrinsicEdit은 intrinsic space(예: shape/albedo/lighting)로 분해해 필요한 채널만 조작함으로써, 픽셀 수준 품질을 유지하면서도 전역 재조명이나 재질 변화 같은 편집을 정밀하게 수행하려는 시도를 보여준다.
+### **9.3 Attribute-Level Editing (Lighting/Material)**
 
-### **9.4 Grounded/Spatial Control의 정밀화**
+편집 대상이 객체의 존재/형태를 넘어 **조명·재질·반사·색감** 같은 속성으로 확장되며 “무엇을 바꾸고 무엇을 보존할지”를 더 세밀하게 나누려는 시도가 등장했다. 이는 단순한 마스크 기반 국소 편집을 넘어, **장면의 물리적/시각적 일관성**까지 다루려는 흐름이다.  
+- **IntrinsicEdit**은 intrinsic space(예: shape/albedo/lighting)로 분해해 필요한 채널만 조작하고 재합성함으로써, 픽셀 수준 품질을 유지한 채 전역 재조명·재질 변화 같은 편집을 정밀하게 수행하려는 방향을 보여준다.  
+이 방향은 “편집=픽셀 수정”에서 “편집=원인(속성/채널) 조작”으로 관점을 확장한다.
 
-텍스트만으로는 제어하기 어려운 위치·크기·형태 정보를 외부 조건(edge/depth/pose/box 등)으로 주입해, “원하는 곳에 원하는 변화를” 만들려는 방향이 강화되었다. ControlNet과 GLIGEN은 구조·레이아웃 제어를 정교화하며, 편집을 보다 설계 가능한(problem-formulatable) 형태로 만드는 흐름을 대표한다.
+### **9.4 Grounded Spatial Control**
 
-### **9.5 Training-free 편집의 확장(Attention/Feature Control)**
+텍스트만으로는 위치·크기·형태 같은 공간 제약을 안정적으로 통제하기 어렵다. 따라서 edge/depth/pose/box 등 **외부 조건을 명시적으로 주입**해 “원하는 곳에 원하는 변화”를 재현하려는 방향이 강화되었다.  
+- **ControlNet**은 픽셀 정렬 조건(edge/depth/pose 등)을 UNet에 잔차 형태로 주입해 구조 보존을 강화했고,  
+- **GLIGEN**은 box 단위로 객체/개념을 주입하는 grounded generation을 통해 “공간적으로 설계 가능한 생성”을 가능하게 했다.  
+이 흐름은 이후 객체 단위 제어, 레이아웃 계획, 관계 제약(가림/접촉) 등 **장면 구성 문제**로 확장된다.
 
-추가 학습 없이도 편집을 수행하는 방향이 강해졌다. Prompt-to-Prompt, PnP, MasaCtrl처럼 attention/feature를 제어해 **레이아웃·형태 정합성**을 유지하면서 편집하는 흐름이 등장했고, 이는 “가볍게 적용 가능한 편집”의 실용성을 크게 높였다. 다만 보존 강도를 높일수록 편집 자유도가 줄어드는 trade-off는 여전히 남아 있다.
+### **9.5 Training-Free Control (Attention/Features)**
 
-### **9.6 프롬프트에서 인스트럭션으로(UI의 변화)**
+모델을 다시 학습시키지 않고도(inference-time), 내부 신호(attention/feature)를 조작해 편집 안정성을 높이려는 흐름이 커졌다. 이는 개발/운영 관점에서 비용이 낮고 적용이 빠르며, 기존 모델 생태계(Stable Diffusion 계열)에 쉽게 붙일 수 있다는 장점이 있다.  
+- **Prompt-to-Prompt**는 cross-attention map의 고정/재주입으로 레이아웃 붕괴를 줄였고,  
+- **PnP**는 source feature injection으로 구조를 강하게 고정했으며,  
+- **MasaCtrl**은 self-attention 제어로 non-rigid 변형에서도 정합성을 강화했다.  
+다만 이 계열은 공통적으로 **보존을 강하게 걸수록 편집 자유도가 줄어드는 trade-off**가 남아 있으며, “정교한 객체 단위 편집”에는 마스크/grounding과의 결합이 필요해지는 경우가 많다.
 
-InstructPix2Pix 이후 편집 인터페이스는 “프롬프트 엔지니어링” 중심에서 **자연어 지시를 따르는 인스트럭션 기반**으로 이동했다. 이는 사용성 측면에서 큰 진전이지만, 합성 데이터 기반 학습이 만드는 편향(불필요한 영역 변형, 충실도/보존의 불안정성)을 어떻게 제어할지는 계속 중요한 연구 과제로 남아 있다.
+### **9.6 Instruction-Following Editing**
+
+InstructPix2Pix 이후 편집 인터페이스는 프롬프트 엔지니어링 중심에서 **자연어 지시(instruction) 기반**으로 이동했다. 이는 사용성을 크게 개선했을 뿐 아니라, 편집을 inversion/최적화 중심의 파이프라인에서 **학습 기반 one-shot 편집 문제**로 전환시켰다는 점에서 중요하다.  
+- 합성 데이터로 대규모 (input, instruction, output) 트리플을 구성해 학습함으로써, 추론 시 “한 번의 forward pass”로 다양한 편집을 수행할 수 있게 했다.  
+- 반면 합성 데이터 편향으로 인한 **불필요 영역 변형(implicit mask 문제)**, **instruction fidelity vs 보존의 불안정성**, **정체성 보존의 한계**는 여전히 중요한 연구 과제로 남아 있다.  
+이 방향은 이후 멀티모달 에이전트 편집, 편집 계획(planning), 다단계 제약 만족형 편집으로 자연스럽게 이어진다.있다.
 
 ---
 
