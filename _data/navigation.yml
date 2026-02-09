@@ -21,6 +21,12 @@ main:
   - title: "Fundamentals"
     url: /fundamentals/
 
+  - title: "CV"
+    url: /cv/
+
+  - title: "CV"
+    url: /cv/
+
 sidebar_nav:
   - title: "AI Reports"
     url: /ai-reports/
@@ -37,3 +43,6 @@ sidebar_nav:
 
   - title: "Fundamentals"
     url: /fundamentals/
+
+  - title: "CV"
+    url: /cv/
