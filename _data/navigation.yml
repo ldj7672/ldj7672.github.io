@@ -24,9 +24,6 @@ main:
   - title: "CV"
     url: /cv/
 
-  - title: "CV"
-    url: /cv/
-
 sidebar_nav:
   - title: "AI Reports"
     url: /ai-reports/

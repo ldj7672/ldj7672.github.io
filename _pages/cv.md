@@ -7,7 +7,7 @@ sidebar:
   nav: sidebar_nav
 ---
 
-## Work Experience
+## 📌 Work Experience
 
 ### NAVER Cloud
 **ML Research Engineer** | September 2025 – Present 
@@ -40,7 +40,7 @@ Conducted applied R&D on AI vision models, including OCR, Object Detection, 3D v
 - H/W Development 
 
 
-## Education
+## 📌 Education
 
 ### Kyung Hee University (경희대학교)
 **Master of Science in Computer Engineering** | September 2020 – August 2022
@@ -51,7 +51,7 @@ Conducted applied R&D on AI vision models, including OCR, Object Detection, 3D v
 ### Pusan National University (부산대학교)
 **Bachelor of Engineering in Electronics Engineering** | 2012 – August 2018
 
-## Technical Expertise
+## 📌 Technical Expertise
 
 ### AI・Computer Vision
 - Perception, 3D Vision, Image・Video Generation, Image Editing, Multi・Omni-modal
