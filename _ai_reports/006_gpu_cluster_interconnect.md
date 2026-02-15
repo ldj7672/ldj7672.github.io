@@ -1,5 +1,5 @@
 ---
-title: "GPU 클러스터 Interconnect & Communication: 심층 분석"
+title: "GPU 클러스터 통신: NVLink, InfiniBand, NCCL,..."
 date: 2025-10-01
 categories:
   - AI Reports
@@ -12,8 +12,6 @@ tags:
   - NVLink
 category: engineering
 ---
-
-# GPU 클러스터 Interconnect & Communication 심층 분석
 
 대규모 모델 학습에서 "GPU가 충분히 빠른데 왜 학습이 안 빨라지지?"라는 질문의 답은 대부분 **통신**에 있다. 최신 GPU(H100, A100)는 TFLOPS 수준에서 압도적이지만, 분산 학습의 실질적인 throughput은 **GPU 간 데이터 이동 효율**에 의해 결정된다. 이 글은 GPU 클러스터 통신을 구성하는 핵심 인프라를 ML Engineer 관점에서 다뤄보려 한다.
 
