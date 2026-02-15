@@ -14,6 +14,8 @@ main:
         url: /ai-reports/mllm/
       - title: "Image & Video Generation"
         url: /ai-reports/image-video-generation/
+      - title: "Engineering"
+        url: /ai-reports/engineering/
 
   - title: "AI Projects"
     url: /ai-projects/
@@ -34,6 +36,8 @@ sidebar_nav:
         url: /ai-reports/mllm/
       - title: "Image & Video Generation"
         url: /ai-reports/image-video-generation/
+      - title: "Engineering"
+        url: /ai-reports/engineering/
 
   - title: "AI Projects"
     url: /ai-projects/
