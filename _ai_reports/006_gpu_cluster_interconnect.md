@@ -13,7 +13,7 @@ tags:
 category: engineering
 ---
 
-대규모 모델 학습에서 "GPU가 충분히 빠른데 왜 학습이 안 빨라지지?"라는 질문의 답은 대부분 **통신**에 있다. 최신 GPU(H100, A100)는 TFLOPS 수준에서 압도적이지만, 분산 학습의 실질적인 throughput은 **GPU 간 데이터 이동 효율**에 의해 결정된다. 이 글은 GPU 클러스터 통신을 구성하는 핵심 인프라를 ML Engineer 관점에서 다뤄보려 한다.
+대규모 모델 학습에서 'GPU가 충분히 빠른데 왜 학습이 안 빨라지지?'라는 질문의 답은 대부분 **통신**에 있다. 최신 GPU(H100, A100)는 TFLOPS 수준에서 압도적이지만, 분산 학습의 실질적인 throughput은 **GPU 간 데이터 이동 효율**에 의해 결정된다. 이 글은 GPU 클러스터 통신을 구성하는 핵심 인프라를 ML Engineer 관점에서 다뤄보려 한다.
 
 ## 핵심 목표
 
@@ -32,7 +32,7 @@ GPU 클러스터 통신을 이해하는 첫 번째 원칙은 **물리적 범위(
 
 ### 1.1 Intra-node Communication (노드 내부)
 
-**정의**: 단일 서버 내 여러 GPU 간 통신
+- **정의**: 단일 서버 내 여러 GPU 간 통신
 - **인터커넥트**: NVLink, NVSwitch, PCIe
 - **대역폭**: 300-900 GB/s (NVLink 기준)
 - **지연**: ~1-5 μs
@@ -40,7 +40,7 @@ GPU 클러스터 통신을 이해하는 첫 번째 원칙은 **물리적 범위(
 
 ### 1.2 Inter-node Communication (노드 간)
 
-**정의**: 서로 다른 서버 간 통신
+- **정의**: 서로 다른 서버 간 통신
 - **네트워크**: InfiniBand, Ethernet (network fabric)
 - **대역폭**: 200-400 Gb/s (InfiniBand HDR/NDR)
 - **지연**: ~2-10 μs
@@ -299,15 +299,15 @@ GPU Memory → NIC → Network (PCIe P2P)
    - NCCL 2.0+
 
 3. **검증**
-```bash
-# GPUDirect RDMA 활성화 확인
-$ cat /sys/kernel/mm/memory_peers/nv_mem/version
-$ lsmod | grep nvidia_peermem
-
-# NCCL에서 GPUDirect 사용 확인
-$ NCCL_DEBUG=INFO python train.py
-# 로그에서 "Using GPUDirect RDMA" 확인
-```
+   ```bash
+   # GPUDirect RDMA 활성화 확인
+   $ cat /sys/kernel/mm/memory_peers/nv_mem/version
+   $ lsmod | grep nvidia_peermem
+   
+   # NCCL에서 GPUDirect 사용 확인
+   $ NCCL_DEBUG=INFO python train.py
+   # 로그에서 "Using GPUDirect RDMA" 확인
+   ```
 
 ### 4.3 GPUDirect Storage
 
