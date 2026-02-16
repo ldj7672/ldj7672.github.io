@@ -438,28 +438,20 @@ nvidia-smi topo -m
 ## 참고 자료
 
 **NVIDIA 공식 문서**
-- NVIDIA NVLink and NVSwitch  
-  https://www.nvidia.com/en-us/data-center/nvlink/
-- NVIDIA NCCL User Guide  
-  https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/
-- GPUDirect RDMA Documentation  
-  https://docs.nvidia.com/cuda/gpudirect-rdma/
+- [NVIDIA NVLink and NVSwitch](https://www.nvidia.com/en-us/data-center/nvlink/)
+- [NVIDIA NCCL User Guide](https://docs.nvidia.com/deeplearning/nccl/user-guide/docs/)
+- [GPUDirect RDMA Documentation](https://docs.nvidia.com/cuda/gpudirect-rdma/)
 
 **Networking**
-- NVIDIA Networking Documentation (InfiniBand)  
-  https://docs.nvidia.com/networking/
+- [NVIDIA Networking Documentation (InfiniBand)](https://docs.nvidia.com/networking/)
 
 **Distributed Training**
-- PyTorch Distributed Training Tutorial  
-  https://pytorch.org/tutorials/beginner/dist_overview.html
-- PyTorch FSDP Documentation  
-  https://pytorch.org/docs/stable/fsdp.html
+- [PyTorch Distributed Training Tutorial](https://pytorch.org/tutorials/beginner/dist_overview.html)
+- [PyTorch FSDP Documentation](https://pytorch.org/docs/stable/fsdp.html)
 
 **Tool**
-- nccl-tests (통신 성능 벤치마크)  
-  https://github.com/NVIDIA/nccl-tests
-- NVIDIA Nsight Systems (프로파일러)  
-  https://developer.nvidia.com/nsight-systems
+- [nccl-tests (통신 성능 벤치마크)](https://github.com/NVIDIA/nccl-tests)
+- [NVIDIA Nsight Systems (프로파일러)](https://developer.nvidia.com/nsight-systems)
 
 ---
 
