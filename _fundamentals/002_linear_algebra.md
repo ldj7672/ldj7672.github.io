@@ -1,5 +1,5 @@
 ---
-title: "머신러닝과 컴퓨터비전을 위한 '선형 대수'"
+title: "머신러닝과 컴퓨터비전을 위한 '선형대수학'"
 date: 2024-12-23
 categories:
   - Fundamentals
