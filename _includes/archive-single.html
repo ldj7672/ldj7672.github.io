@@ -26,6 +26,20 @@
       </div>
     {% endif %}
 
+    {% if post.collection == 'ai_reports' and post.category %}
+      <p class="page__meta archive__item-meta" style="margin-bottom: 0.3em;">
+        {% if post.category == 'mllm' %}
+          <a href="{{ base_path }}/ai-reports/mllm/" style="color: #0066cc; text-decoration: none; font-weight: 500;">MLLM</a>
+        {% elsif post.category == 'perception' %}
+          <a href="{{ base_path }}/ai-reports/perception/" style="color: #0066cc; text-decoration: none; font-weight: 500;">Perception</a>
+        {% elsif post.category == 'image-video-generation' %}
+          <a href="{{ base_path }}/ai-reports/image-video-generation/" style="color: #0066cc; text-decoration: none; font-weight: 500;">Image & Video Generation</a>
+        {% elsif post.category == 'engineering' %}
+          <a href="{{ base_path }}/ai-reports/engineering/" style="color: #0066cc; text-decoration: none; font-weight: 500;">Engineering</a>
+        {% endif %}
+      </p>
+    {% endif %}
+    
     <h2 class="archive__item-title" itemprop="headline">
       {% if post.link %}
         <a href="{{ post.link }}">{{ title }}</a> <a href="{{ base_path }}{{ post.url }}" rel="permalink"><i class="fa fa-link" aria-hidden="true" title="permalink"></i><span class="sr-only">Permalink</span></a>
