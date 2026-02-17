@@ -221,7 +221,7 @@ InternVL3.5의 기술적 특이점은 효율성과 성능을 동시에 개선한
 
 ## 1. Introduction
 
-**GLM-4.5V**는 Zhipu AI와 Tsinghua University가 2025년 8월 공개한 Reinforcement Learning with Curriculum Sampling (RLCS) 프레임워크를 통해 멀티모달 추론 능력을 강화한 모델이다. 
+**GLM-4.5V**는 Zhipu AI와 Tsinghua University가 2025년 7월 1일 테크리포트에서 소개된 RLCS(Reinforcement Learning with Curriculum Sampling)를 포함한 스케일러블 멀티모달 RL 레시피를 기반으로, 2025년 8월 11일경 공개/배포된 VLM이다. GLM-4.5V는 GLM-4.5-Air 기반(MoE, 106B total / 12B active)이며, RLCS를 포함한 멀티모달 RL 스택(RLVR + RLHF, unified reward system, dynamic sampling expansion 등)을 통해 멀티모달 추론 능력을 강화한 모델이다. 
 
 기존 멀티모달 모델들은 다양한 도메인에서 학습하지만, 모델이 현재 잘할 수 있는 작업과 어려운 작업을 구분하지 않고 동일하게 학습한다. RLCS는 **모델의 역량에 따라 학습할 태스크를 동적으로 선택**하여 효율적이고 안정적인 학습을 가능하게 한다. 이는 curriculum learning의 아이디어를 reinforcement learning에 적용한 것이다.
 
@@ -233,7 +233,7 @@ Reinforcement Learning은 LLM에서 추론 능력을 향상시키는 데 효과�
 
 ![GLM-4.5V Architecture](/figures/mllm/glm4.5v.png)
 
-GLM-4.5V의 핵심은 **Reinforcement Learning with Curriculum Sampling (RLCS)** 프레임워크다. 이는 multi-domain reinforcement learning을 통해 모델의 역량에 따라 동적으로 태스크를 선택하는 방식이다.
+GLM-4.5V의 핵심은 **Reinforcement Learning with Curriculum Sampling (RLCS)**를 포함한 멀티모달 RL 스택이다. RLCS는 multi-domain reinforcement learning을 통해 모델의 역량에 따라 동적으로 태스크를 선택하는 방식이며, RLVR + RLHF, unified reward system, dynamic sampling expansion 등과 함께 멀티모달 RL 레시피의 한 구성요소로 작동한다.
 
 ### 2.1. RLCS 프레임워크 개요
 
@@ -244,11 +244,13 @@ RLCS는 curriculum learning의 아이디어를 reinforcement learning에 적용�
 - Model이 현재 잘 수행할 수 있는 task부터 시작하여 점진적으로 어려운 task로 확장
 - Model의 역량에 따라 동적으로 학습할 task 선택
 
-학습은 두 단계로 진행된다. 첫째, 다양한 지식 집약적 멀티모달 데이터로 vision foundation model을 대규모 사전 학습한다. 둘째, RLCS를 적용하여 model의 전체 잠재력을 발휘한다. 이 단계에서 model의 역량을 평가하고 그에 맞는 난이도의 task를 선택하여 점진적으로 어려운 작업으로 확장한다.
+학습은 여러 단계로 진행된다. 첫째, 다양한 지식 집약적 멀티모달 데이터로 vision foundation model을 대규모 pre-training을 진행한다. 둘째, long-context, 고해상도, 비디오 처리를 위한 continual training을 수행한다. 셋째, SFT(Supervised Fine-Tuning) 단계에서 long CoT(Chain-of-Thought) 스타일 정렬을 수행한다. 마지막으로 RLCS를 포함한 멀티모달 RL 스택(RLVR + RLHF, unified reward system, dynamic sampling expansion 등)을 적용한다. 이 단계에서 model의 역량을 평가하고 그에 맞는 난이도의 task를 선택하여 점진적으로 어려운 작업으로 확장한다.
 
 **학습 단계**
-1. **대규모 사전 학습**: 다양한 지식 집약적 멀티모달 데이터로 vision foundation model 사전 학습
-2. **RLCS 적용**: Model의 전체 잠재력을 발휘하기 위해 RLCS 적용
+1. **Pre-training**: 다양한 지식 집약적 멀티모달 데이터로 vision foundation model 사전 학습
+2. **Continual Training**: long-context, 고해상도, 비디오 처리를 위한 지속적 학습
+3. **SFT**: 롱 CoT 스타일 정렬을 위한 Supervised Fine-Tuning
+4. **Multi-modal RL**: RLCS를 포함한 RL 스택(RLVR + RLHF, unified reward system, dynamic sampling expansion 등) 적용
 
 ### 2.2. 동적 태스크 선택 메커니즘
 
@@ -278,21 +280,21 @@ Model이 수학 문제는 잘 풀지만 코딩 문제는 어려워한다면, 코
 
 ### 2.3. 학습 효율성과 성능 향상
 
-RLCS는 model이 이미 잘하는 작업에 시간을 낭비하지 않고, 어려운 작업에 집중하여 효율적으로 학습할 수 있게 해준다. Reinforcement learning을 통해 최대 +10.6% 성능 향상을 달성했으며, 다양한 도메인(STEM, 코딩, GUI agent, 비디오 이해)에서 균형있게 성능을 향상시켰다. 특히 작은 model(GLM-4.1V-9B-Thinking)에서도 효과적으로 작동하여, curriculum sampling이 model의 잠재력을 효율적으로 발휘하게 해준다는 것을 보여준다.
+RLCS는 model이 이미 잘하는 작업에 시간을 낭비하지 않고, 어려운 작업에 집중하여 효율적으로 학습할 수 있게 해준다. 멀티모달 RL 단계(RLCS를 포함한 여러 안정화/샘플링 레시피 포함)가 최대 +10.6% 성능 향상을 보였으며, 다양한 도메인(STEM, 코딩, GUI agent, 비디오 이해)에서 균형있게 성능을 향상시켰다. 특히 작은 model(GLM-4.1V-9B-Thinking)에서도 효과적으로 작동하여, curriculum sampling이 model의 잠재력을 효율적으로 발휘하게 해준다는 것을 보여준다.
 
 ## 3. Experimental Results
 
 GLM-4.5V는 42개 공개 benchmark에서 오픈소스 model 중 SOTA 성능을 달성했다. STEM 문제 해결에서는 수학, 물리, 화학 문제에서 강력한 성능을 보였으며, 특히 그래프나 다이어그램을 포함한 복잡한 문제에서도 정확한 추론을 수행할 수 있었다. 코딩 작업에서는 이미지나 비디오에서 코드를 생성하거나 코드를 분석하는 작업에서 우수한 결과를 보였으며, 스크린샷을 보고 실행 가능한 코드를 생성할 수 있었다.
 
-GUI agent 작업에서는 스크린샷을 보고 GUI 요소를 인식하고 작업을 수행하는 능력에서 closed-source 모델인 Gemini-2.5-Flash와 경쟁력 있는 성능을 보였다. 이는 RLCS가 다양한 도메인에서 균형있게 성능을 향상시켰음을 보여준다.
+GUI agent 작업에서는 스크린샷을 보고 GUI 요소를 인식하고 작업을 수행하는 능력에서 closed-source 모델인 Gemini-2.5-Flash와 경쟁력 있는 성능을 보였다. 이는 RLCS를 포함한 멀티모달 RL 스택이 다양한 도메인에서 균형있게 성능을 향상시켰음을 보여준다.
 
-특히 GLM-4.1V-9B-Thinking은 단 9B parameter로도 72B parameter의 Qwen2.5-VL-72B보다 29개 benchmark에서 우수한 성능을 보여, 효율성과 성능의 균형을 잘 달성했다. 이는 RLCS가 작은 모델에서도 효과적으로 작동함을 보여주며, curriculum sampling이 모델의 잠재력을 효율적으로 발휘하게 해준다는 것을 입증한다.
+특히 GLM-4.1V-9B-Thinking은 단 9B parameter로도 72B parameter의 Qwen2.5-VL-72B보다 29개 benchmark에서 우수한 성능을 보여, 효율성과 성능의 균형을 잘 달성했다. 이는 RLCS를 포함한 멀티모달 RL 스택이 작은 모델에서도 효과적으로 작동함을 보여주며, curriculum sampling이 모델의 잠재력을 효율적으로 발휘하게 해준다는 것을 입증한다.
 
 ## 4. Conclusion
 
-GLM-4.5V의 기술적 특이점은 **RLCS (Reinforcement Learning with Curriculum Sampling)** 프레임워크다. 이는 curriculum learning의 아이디어를 reinforcement learning에 적용하여, model의 역량에 따라 동적으로 학습할 task를 선택하는 방식이다. 기존 RL 방식이 모든 도메인을 동일하게 학습하여 불균형 문제가 발생했던 것과 달리, RLCS는 도메인별 성능을 지속적으로 평가하고 그에 맞는 난이도의 task를 선택하여 점진적으로 어려운 작업으로 확장한다.
+GLM-4.5V의 기술적 특이점은 **RLCS (Reinforcement Learning with Curriculum Sampling)**를 포함한 멀티모달 RL 스택이다. RLCS는 curriculum learning의 아이디어를 reinforcement learning에 적용하여, model의 역량에 따라 동적으로 학습할 task를 선택하는 방식이다. 기존 RL 방식이 모든 도메인을 동일하게 학습하여 불균형 문제가 발생했던 것과 달리, RLCS는 도메인별 성능을 지속적으로 평가하고 그에 맞는 난이도의 task를 선택하여 점진적으로 어려운 작업으로 확장한다. RLCS는 RLVR + RLHF, unified reward system, dynamic sampling expansion 등과 함께 멀티모달 RL 레시피의 한 구성요소로 작동한다.
 
-이를 통해 Reinforcement learning으로 최대 +10.6% 성능 향상을 달성했으며, 특히 작은 model(GLM-4.1V-9B-Thinking)도 큰 model(Qwen2.5-VL-72B) 대비 우수한 성능을 보여, curriculum sampling이 model의 잠재력을 효율적으로 발휘하게 해준다는 것을 입증했다.
+이를 통해 멀티모달 RL 단계(여러 안정화/샘플링 레시피 포함)가 최대 +10.6% 성능 향상을 달성했으며, 특히 작은 model(GLM-4.1V-9B-Thinking)도 큰 model(Qwen2.5-VL-72B) 대비 우수한 성능을 보여, curriculum sampling이 model의 잠재력을 효율적으로 발휘하게 해준다는 것을 입증했다.
 
 ---
 
@@ -339,7 +341,7 @@ Pan and Scan은 고해상도나 비정사각형 이미지를 고정된 resolutio
 - 고정된 resolution은 이미지 왜곡이나 정보 손실 발생 가능
 - 유연한 resolution 처리로 다양한 이미지 효율적 처리
 
-**기술적 세부사항**
+**세부사항**
 - **종횡비 유지**: 원본 이미지의 종횡비 보존
 - **효율적 처리**: 다양한 크기의 이미지를 효율적으로 처리
 - **정보 손실 최소화**: 이미지 왜곡 최소화
