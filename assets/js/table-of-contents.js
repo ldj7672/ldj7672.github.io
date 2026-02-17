@@ -13,8 +13,9 @@
     const content = document.querySelector('.page__content');
     if (!content) return;
 
-    // Find all headings (h2, h3, h4, h5, h6)
-    const headings = content.querySelectorAll('h2, h3, h4, h5, h6');
+    // Find all headings (h1, h2, h3, h4, h5, h6) within the content area
+    // The page title is outside .page__content, so all headings inside are valid
+    const headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
     if (headings.length === 0) return;
 
     // Create TOC container
@@ -115,8 +116,8 @@
 
     // Highlight active section on scroll and hide/show TOC at top
     function updateActiveTOC() {
-      const scrollPos = window.scrollY;
-      const scrollThreshold = 200; // Hide TOC when scrolled less than 200px from top
+      const scrollPos = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+      const scrollThreshold = 100; // Hide TOC when scrolled less than 100px from top
       
       // Hide TOC when at top of page
       if (scrollPos < scrollThreshold) {
