@@ -16,10 +16,27 @@
   z-index: 100;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   display: none; // Hidden by default, shown via JS if headings exist
+  transition: opacity 0.3s ease, transform 0.3s ease;
 
   @include breakpoint($large) {
     // Left position will be set dynamically by JavaScript based on sidebar width
     display: block;
+  }
+
+  // Hide when at top of page
+  &.at-top {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-50%) translateX(-100%);
+  }
+
+  // Collapsed state
+  &.collapsed {
+    .toc-list {
+      display: none;
+    }
+    max-width: 60px;
+    padding: 0.5em;
   }
 
   .toc-title {
@@ -31,6 +48,28 @@
     letter-spacing: 0.5px;
     padding-bottom: 0.5em;
     border-bottom: 1px solid #e8e8e8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .toc-toggle {
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #666;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: #0066cc;
+      }
+    }
   }
 
   .toc-list {

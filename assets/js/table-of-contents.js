@@ -24,8 +24,17 @@
 
     const tocTitle = document.createElement('div');
     tocTitle.className = 'toc-title';
-    tocTitle.textContent = '목차';
+    tocTitle.innerHTML = '<span>목차</span><button class="toc-toggle" aria-label="목차 닫기">×</button>';
     tocContainer.appendChild(tocTitle);
+    
+    // Toggle button functionality
+    const toggleBtn = tocTitle.querySelector('.toc-toggle');
+    let isCollapsed = false;
+    toggleBtn.addEventListener('click', function() {
+      isCollapsed = !isCollapsed;
+      tocContainer.classList.toggle('collapsed', isCollapsed);
+      toggleBtn.textContent = isCollapsed ? '☰' : '×';
+    });
 
     const tocList = document.createElement('ul');
     tocList.className = 'toc-list';
@@ -86,26 +95,42 @@
         if (sidebar) {
           const sidebarRect = sidebar.getBoundingClientRect();
           const sidebarWidth = sidebarRect.width || 250; // Default to 250px if not found
-          tocContainer.style.left = sidebarWidth + 'px';
+          // Position TOC to the right of sidebar with some padding
+          tocContainer.style.left = (sidebarWidth + 20) + 'px';
         } else {
           // If no sidebar, position at left edge
-          tocContainer.style.left = '0px';
+          tocContainer.style.left = '20px';
         }
       }
       
       // Position on load and resize
       positionTOC();
       window.addEventListener('resize', positionTOC);
+      
+      // Also check on scroll to ensure TOC doesn't overlap sidebar
+      window.addEventListener('scroll', function() {
+        positionTOC();
+      });
     }
 
-    // Highlight active section on scroll
+    // Highlight active section on scroll and hide/show TOC at top
     function updateActiveTOC() {
-      const scrollPos = window.scrollY + 100; // Offset for fixed header
+      const scrollPos = window.scrollY;
+      const scrollThreshold = 200; // Hide TOC when scrolled less than 200px from top
+      
+      // Hide TOC when at top of page
+      if (scrollPos < scrollThreshold) {
+        tocContainer.classList.add('at-top');
+      } else {
+        tocContainer.classList.remove('at-top');
+      }
+
+      const scrollPosWithOffset = scrollPos + 100; // Offset for fixed header
 
       let current = '';
       headings.forEach((heading) => {
         const headingTop = heading.getBoundingClientRect().top + window.pageYOffset;
-        if (scrollPos >= headingTop) {
+        if (scrollPosWithOffset >= headingTop) {
           current = heading.id;
         }
       });
