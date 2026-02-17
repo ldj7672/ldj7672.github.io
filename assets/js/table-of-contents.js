@@ -13,10 +13,37 @@
     const content = document.querySelector('.page__content');
     if (!content) return;
 
-    // Find all headings (h1, h2, h3, h4, h5, h6) within the content area
-    // The page title is outside .page__content, so all headings inside are valid
-    const headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
-    if (headings.length === 0) return;
+    // Wait a bit for content to be fully rendered (especially if markdown processing is async)
+    setTimeout(function() {
+      // Find all headings (h1, h2, h3, h4, h5, h6) within the content area
+      // The page title is outside .page__content, so all headings inside are valid
+      const headings = content.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      
+      // Debug: log found headings
+      console.log('Found headings:', headings.length);
+      console.log('Content element:', content);
+      console.log('Content HTML (first 500 chars):', content.innerHTML.substring(0, 500));
+      
+      const h1s = content.querySelectorAll('h1');
+      console.log('H1 headings found:', h1s.length);
+      h1s.forEach((h, i) => {
+        console.log(`H1 ${i}: ${h.textContent.substring(0, 50)}`);
+      });
+      
+      headings.forEach((h, i) => {
+        console.log(`Heading ${i}: ${h.tagName} - ${h.textContent.substring(0, 50)}`);
+      });
+      
+      if (headings.length === 0) {
+        console.log('No headings found in .page__content');
+        return;
+      }
+      
+      createTOC(headings, content, article);
+    }, 100);
+  }
+
+  function createTOC(headings, content, article) {
 
     // Create TOC container
     const tocContainer = document.createElement('div');
@@ -161,10 +188,18 @@
     updateActiveTOC();
   }
 
-  // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTOC);
-  } else {
+  // Original initTOC function wrapper
+  function initTOCWrapper() {
     initTOC();
   }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTOCWrapper);
+  } else {
+    initTOCWrapper();
+  }
+  
+  // Also try after a delay to catch any late-rendered content
+  setTimeout(initTOCWrapper, 500);
 })();
