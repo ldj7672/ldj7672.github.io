@@ -23,6 +23,8 @@ Qwen2.5-VL에서 Qwen3-VL로의 발전은 이렇듯 실용적인 방향으로 �
 
 ## 2. Technical Approach
 
+![Qwen3-VL Architecture](/figures/mllm/qwen3vl.png)
+
 테크니컬 리포트에서 Qwen3-VL은 세 가지 핵심적인 개선을 설명한다. 
 
 ### 2.1. Interleaved-MRoPE
@@ -126,6 +128,8 @@ Extended Context(256K → 1M token)와 Advanced Spatial Perception은 이러한 
 
 ## 2. Technical Approach
 
+![InternVL3.5 Architecture](/figures/mllm/internvl3.5.png)
+
 InternVL3.5는 효율성과 성능을 동시에 개선하기 위해 세 가지 핵심 기술을 제안했다.
 
 ### 2.1. Cascade Reinforcement Learning
@@ -226,6 +230,8 @@ InternVL3.5의 기술적 특이점은 효율성과 성능을 동시에 개선한
 Reinforcement Learning은 LLM에서 추론 능력을 향상시키는 데 효과적이지만, 멀티모달 모델에 적용할 때는 여러 도메인(STEM, 코딩, GUI agent 등)에서의 성능을 균형있게 향상시키는 것이 어렵다. 모델이 한 도메인에서는 잘 학습하지만 다른 도메인에서는 성능이 떨어지는 불균형 문제가 발생할 수 있다. RLCS는 이 문제를 curriculum sampling으로 해결한다. 모델의 현재 역량을 평가하고, 그에 맞는 난이도의 태스크를 선택하여 점진적으로 어려운 작업으로 확장하는 방식이다.
 
 ## 2. Technical Approach
+
+![GLM-4.5V Architecture](/figures/mllm/glm4.5v.png)
 
 GLM-4.5V의 핵심은 **Reinforcement Learning with Curriculum Sampling (RLCS)** 프레임워크다. 이는 multi-domain reinforcement learning을 통해 모델의 역량에 따라 동적으로 태스크를 선택하는 방식이다.
 
@@ -387,7 +393,7 @@ Gemma 3의 기술적 특이점은 경량 model에 멀티모달 능력을 효율�
 
 ---
 
-# Discussion
+# 💡 Discussion
 
 ## MLLM 기술 트렌드
 
@@ -408,11 +414,12 @@ VLM 기술은 **실용성과 효율성**을 중심으로 발전하고 있다. �
 모델 성능 측면에서는 더 복잡하고 어려운 벤치마크가 등장하고 이를 통한 경쟁이 주를 이룰 것이고, 자체 인하우스 모델 사용이 중요한 경우는 모델 경량화와 같은 효율성 개선을 지속적으로 추구할 것으로 예상된다. 
 
 *사실 체감상으로는 이미 모델 성능의 한계에 도달한 것이 아닐까 하는 생각도 든다. 이전 대비 버전이 바뀌더라도 큰 차이를 느끼기 어려운 상황이다. 몇 년 전만 해도 스마트폰이 매년 큰 발전을 이뤘지만, 지금은 해마다 스마트폰을 굳이 바꿀 필요가 없는 것처럼...*
+
 ---
 
 ## 참고 자료
 
-- [Qwen3-VL Technical Report](https://arxiv.org/html/2505.09388v1)
-- [InternVL3.5 Technical Report](https://internvl.github.io/blog/2025-08-26-InternVL-3.5/)
-- [GLM-4.5V Technical Report](https://arxiv.org/pdf/2507.01006) (arXiv:2507.01006)
-- [Gemma 3 Technical Report](https://arxiv.org/html/2503.19786v1) (arXiv:2503.19786)
+- [Qwen3-VL Technical Report](https://arxiv.org/abs/2511.21631)
+- [InternVL3.5 Technical Report](https://arxiv.org/abs/2508.18265)
+- [GLM-4.5V and GLM-4.1V-Thinking Technical Report](https://arxiv.org/abs/2507.01006) 
+- [Gemma 3 Technical Report](https://arxiv.org/abs/2503.19786) 
