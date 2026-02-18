@@ -369,9 +369,28 @@ Pan and Scan은 고해상도나 비정사각형 이미지를 고정된 resolutio
   - Global layer: 전체 맥락 유지
   - 두 가지를 적절히 혼합하여 효율성과 성능 확보
 
-Local/Global Attention 혼합 구조는 128K token context를 지원하면서도 KV-cache 메모리 증가를 크게 제한한다. 모든 layer에서 full attention을 수행하는 경우와 비교하면, local layer는 1024 token window만 사용하므로 KV cache 메모리 사용량이 크게 감소한다. Global layer는 전체 128K token에 attention하지만 전체 layer의 약 1/6(5:1 비율)만 global layer이므로, 전체적인 메모리 사용량은 full attention 대비 현저히 낮다. 
+Local/Global Attention 혼합 구조는 128K token context를 지원하면서도 KV-cache 메모리 증가를 크게 제한한다. 모든 layer에서 full attention을 수행하는 경우와 비교하면, local layer는 1024 token window만 사용하므로 KV cache 메모리 사용량이 크게 감소한다. Global layer는 전체 128K token에 attention하지만 전체 layer의 약 1/6(5:1 비율)만 global layer이므로, 전체적인 메모리 사용량은 full attention 대비 현저히 낮다.
 
-### 2.4. Knowledge Distillation
+### 2.4. RoPE Rescaling for Long Context
+
+**RoPE Rescaling**은 128K token의 long context를 지원하기 위한 기술이다. 모델은 처음부터 128K sequence로 학습하는 대신, 32K sequence로 pre-training 후 RoPE rescaling을 통해 4B, 12B, 27B model을 128K token으로 확장한다.
+
+RoPE는 각 위치에 rotation angle을 할당하여 위치 정보를 인코딩한다. 표준 RoPE는 학습 시 본 적 없는 긴 위치에 대해 extrapolation을 시도하지만, 먼 거리의 단어들이 매우 유사한 embedding 값을 가지게 되어 상대적 위치를 구분하기 어려워진다. 
+
+"Extending Context Window of Large Language Models via Positional Interpolation" (Chen et al., 2023)에서 제안한 **Position Interpolation**은 이를 interpolation 문제로 재구성한다. 위치 인덱스를 스케일링하여 모델이 학습한 원래 범위 내에 유지하는 방식이다. 예를 들어, 2,048 token으로 학습된 모델이 4,096 token을 처리해야 할 때, 위치 4,096을 위치 2,048로 매핑하여 rotation angle이 모델이 익숙한 범위 내에 있도록 한다. Scaling factor는 **s = new_context_length / old_context_length**로 계산되며, 이는 RoPE의 rotation angle 계산에 적용된다.
+
+**핵심 아이디어**
+- 32K sequence로 pre-training 후 RoPE rescaling으로 128K로 확장
+- positional interpolation과 유사한 과정 사용
+- Scaling factor 8이 실용적으로 잘 작동함 (128K / 32K = 4이지만, 실제로는 8 사용)
+
+**세부사항**
+- **RoPE Base Frequency 조정**: Global self-attention layer의 RoPE base frequency를 Gemma 2의 10k에서 1M으로 증가시킴. 이는 긴 컨텍스트에서 더 정밀한 위치 인코딩을 가능하게 한다.
+- **Local Layer Frequency 유지**: Local self-attention layer는 10k frequency 유지
+- **Positional Interpolation**: Global self-attention layer의 span을 확장하기 위해 positional interpolation 과정 적용. 위치 인덱스를 스케일링하여 학습 범위 내에 유지
+- **Scaling Factor**: 실험적으로 scaling factor 8이 효과적임을 확인
+
+### 2.5. Knowledge Distillation
 
 Gemma 3는 사전 학습 단계에서 Knowledge Distillation을 적용하여 경량 model의 성능을 향상시켰다. 이를 통해 Gemma3-4B-IT가 Gemma2-27B-IT와 경쟁력 있는 성능을 달성할 수 있었으며, 작은 model이 큰 model의 성능에 근접할 수 있게 해주어 경량 model의 실용성을 크게 향상시켰다. 또한 novel post-training recipe와 결합하여 수학, 추론, 채팅, 지시 수행, 다국어 능력을 크게 향상시켜 경량 model도 충분히 강력한 성능을 달성할 수 있게 했다.
 
