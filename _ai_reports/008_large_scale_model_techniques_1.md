@@ -29,7 +29,9 @@ Large-scale Model에는 학습 안정성, 메모리 효율성, 긴 컨텍스트 
 
 Large-scale Language Model은 기본적으로 **Transformer 아키텍처**를 기반으로 하며, 대부분 **Decoder-only 구조**를 채택한다. 이는 GPT 시리즈부터 시작하여 Llama, Gemma, Qwen 등 최신 모델들까지 이어지는 표준 구조다.
 
-![Transformer Architecture](/figures/large_scale_model/transformer_architecture.png)
+<div style="text-align: center;">
+  <img src="/figures/large_scale_model/transformer_architecture.png" alt="Transformer Architecture" style="max-width: 100%; height: auto;">
+</div>
 
 ### Transformer의 기본 구성 요소
 
@@ -168,7 +170,9 @@ RMSNorm은 평균 계산을 생략하므로 LayerNorm보다 계산량이 적다.
 
 ### SwiGLU
 
-![SwiGLU Architecture](/figures/large_scale_model/swiglu.jpeg)
+<div style="text-align: center;">
+  <img src="/figures/large_scale_model/swiglu.jpeg" alt="SwiGLU Architecture" style="max-width: 100%; height: auto;">
+</div>
 
 **SwiGLU**는 Swish 활성화 함수와 Gated Linear Unit (GLU)을 결합한 활성화 함수다. Swish는 단순한 활성화 함수로 $\text{Swish}(x) = x \cdot \text{sigmoid}(x)$로 정의되며, SwiGLU는 이 Swish를 GLU의 gate 메커니즘과 결합한 것이다.
 
@@ -192,7 +196,9 @@ GLU는 두 개의 선형 변환을 곱하여 gate 메커니즘을 구현한다. 
 
 ## 1.4 Pre-Normalization vs. Post-Normalization
 
-![Pre-Normalization Structure](/figures/large_scale_model/pre_LN.png)
+<div style="text-align: center;">
+  <img src="/figures/large_scale_model/pre_LN.png" alt="Pre-Normalization Structure" style="max-width: 100%; height: auto;">
+</div>
 
 Transformer 아키텍처에서 Normalization의 위치는 모델의 학습 안정성과 성능에 중요한 영향을 미친다. Normalization을 residual connection과 sub-layer(Attention, FFN) 연산의 어느 위치에 배치하느냐에 따라 gradient flow, 학습 속도, 그리고 깊은 네트워크에서의 안정성이 달라진다. **Pre-Normalization (Pre-Norm)**은 normalization을 sub-layer 연산 전에 적용하고, **Post-Normalization (Post-Norm)**은 sub-layer 연산 후에 적용한다.
 
@@ -330,7 +336,9 @@ $$R_{\Theta_T, t}^d, R_{\Theta_H, h}^d, R_{\Theta_W, w}^d$$
 
 ## 3.1 FlashAttention 
 
-![FlashAttention Architecture](/figures/large_scale_model/flash_attention.png)
+<div style="text-align: center;">
+  <img src="/figures/large_scale_model/flash_attention.png" alt="FlashAttention Architecture" style="max-width: 100%; height: auto;">
+</div>
 
 **FlashAttention**은 표준 attention의 메모리 병목 문제를 해결하기 위해 개발된 최적화 기법으로, tiling, recomputation, 그리고 online softmax 알고리즘을 결합한 CUDA 커널 최적화 기술이다. FlashAttention v1은 forward pass의 메모리 사용량을 $O(N^2)$에서 $O(N)$으로 줄였고, v2는 backward pass까지 최적화하여 전체 학습 과정에서 메모리 효율성을 향상시켰다. 최신 버전인 v3는 다양한 하드웨어에 대한 추가 최적화를 포함하여 더욱 효율적인 attention 연산을 제공한다.
 
@@ -378,7 +386,9 @@ FlashAttention은 CUDA 커널을 직접 작성하여 다음과 같은 최적화�
 
 ## 3.2 GQA (Grouped Query Attention) & MQA
 
-![GQA and MQA Comparison](/figures/large_scale_model/gqa_mqa.png)
+<div style="text-align: center;">
+  <img src="/figures/large_scale_model/gqa_mqa.png" alt="GQA and MQA Comparison" style="max-width: 100%; height: auto;">
+</div>
 
 $$\text{Memory} = 2 \times \text{num\_heads} \times \text{head\_dim} \times \text{seq\_len}$$
 
