@@ -1,6 +1,6 @@
 ---
 title: "MLLM 기술 리뷰: Qwen3-VL, InternVL3.5, GLM-4.5V, Gemma 3"
-date: 2025-02-16
+date: 2025-12-15
 categories:
   - AI Reports
 tags:

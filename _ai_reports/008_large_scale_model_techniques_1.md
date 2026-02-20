@@ -1,6 +1,6 @@
 ---
 title: "Large-scale Model 핵심 기술: Architecture, Norm, Positional Encoding"
-date: 2025-02-16
+date: 2025-12-16
 categories:
   - AI Reports
 tags:
