@@ -393,23 +393,27 @@ FlashAttention은 CUDA 커널을 직접 작성하여 다음과 같은 최적화�
   <img src="/figures/large_scale_model/gqa_mqa.png" alt="GQA and MQA Comparison" style="max-width: 100%; height: auto;">
 </div>
 
-$$\text{Memory} = 2 \times \text{num\_heads} \times \text{head\_dim} \times \text{seq\_len}$$
+$$\text{Memory} = 2 \times N_h \times d_h \times L$$
 
-표준 Multi-Head Attention (MHA)에서는 각 head마다 독립적인 K, V를 가지므로, KV cache의 메모리 사용량은 위와 같다. 예를 들어, 32 head, head_dim=128, seq_len=32K인 경우 `Memory = 2 × 32 × 128 × 32,768 = 약 268MB (FP16 기준)`와 같기에 긴 컨텍스트에서 상당한 메모리 부담이 된다.
+여기서 $N_h$는 head 수, $d_h$는 head dimension, $L$은 sequence length이다. 표준 Multi-Head Attention (MHA)에서는 각 head마다 독립적인 K, V를 가지므로, KV cache의 메모리 사용량은 위와 같다. 예를 들어, 32 head, head_dim=128, seq_len=32K인 경우 Memory = 2 × 32 × 128 × 32,768 = 약 268MB (FP16 기준)로, 긴 컨텍스트에서 상당한 메모리 부담이 된다.
 
 ### MQA (Multi-Query Attention)
 
-$$\text{Memory} = 2 \times \text{head\_dim} \times \text{seq\_len}$$
+$$\text{Memory} = 2 \times d_h \times L$$
 
-**MQA**는 모든 head가 하나의 K, V를 공유한다. `Memory = 2 × 128 × 32,768 = 약 8.4MB (FP16 기준)`와 같이 메모리 사용량이 약 32배 감소한다. 다만, 모든 head가 동일한 K, V를 사용하므로 표현력이 제한될 수 있다.
+**MQA (Multi-Query Attention)**는 모든 head가 하나의 K, V를 공유하는 방식이다. 위 예시에서 Memory = 2 × 128 × 32,768 = 약 8.4MB (FP16 기준)로, 메모리 사용량이 약 32배 감소한다. 이는 추론 속도를 크게 향상시키지만, 모든 head가 동일한 K, V를 사용하므로 표현력이 제한될 수 있다.
+
+실험적으로 MQA는 추론 속도는 크게 향상되지만, 모델 품질 저하와 학습 불안정성 문제가 존재한다. 특히 복잡한 작업이나 긴 컨텍스트에서 성능 저하가 두드러질 수 있다. 이러한 한계 때문에 MQA는 주로 추론 속도가 중요한 특정 응용에서만 사용되며, 일반적인 LLM에서는 GQA가 더 선호된다.
 
 ### GQA (Grouped Query Attention)
 
-**GQA**는 MQA와 MHA의 중간 형태로, 여러 head가 하나의 K, V 그룹을 공유한다.
+**GQA (Grouped Query Attention)**는 MQA와 MHA의 중간 형태로, 여러 head가 하나의 K, V 그룹을 공유한다. GQA는 query head를 여러 그룹으로 나누고, 각 그룹이 하나의 key-value head 쌍을 공유하는 방식이다.
 
-$$\text{Memory} = 2 \times \text{num\_kv\_heads} \times \text{head\_dim} \times \text{seq\_len}$$
+$$\text{Memory} = 2 \times N_{kv} \times d_h \times L$$
 
-여기서 $\text{num\_kv\_heads} < \text{num\_heads}$이다. 예를 들어, 32 head 중 8개의 KV head를 사용하면 MHA 대비 4배 감소하여 `Memory = 2 × 8 × 128 × 32,768 = 약 67MB (FP16 기준)`가 되고 MQA보다는 더 많은 표현력을 유지한다.
+여기서 $N_{kv}$는 KV head 수이고 $N_{kv} < N_h$이다. 예를 들어, 32 head 중 8개의 KV head를 사용하면 MHA 대비 4배 감소하여 Memory = 2 × 8 × 128 × 32,768 = 약 67MB (FP16 기준)가 되고 MQA보다는 더 많은 표현력을 유지한다.
+
+GQA 논문에서는 기존 MHA 체크포인트를 GQA로 변환하는 uptraining 방법을 제안했다. 이 방법은 원래 pre-training compute의 약 5%만 사용하여 기존 모델을 변환할 수 있으며, key-value projection 행렬을 mean-pooling하여 단일 projection 행렬로 만드는 방식이 개별 head 선택이나 랜덤 초기화보다 우수한 성능을 보인다. 실험 결과, GQA는 MHA에 가까운 품질을 유지하면서도 MQA만큼 빠른 추론 속도를 달성한다. 이러한 특성 때문에 Llama 2, Gemma 등 최신 LLM에서 GQA가 표준으로 채택되었다.
 
 **수식 비교**
 
