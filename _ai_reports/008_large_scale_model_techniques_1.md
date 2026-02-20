@@ -270,8 +270,8 @@ $$\tilde{q}_m = R_{\Theta, m}^d q_m$$
 $$\tilde{k}_n = R_{\Theta, n}^d k_n$$
 
 여기서 $R_{\Theta, m}^d$는 각 차원 쌍에 대해 독립적으로 적용된다. 예를 들어, $d=4$인 벡터 $q_m = [q_0, q_1, q_2, q_3]^T$에 대해 다음과 같이 적용된다.
-- 차원 쌍 (0,1)에 $R_{\Theta, m}^2$ 적용: $\left[\tilde{q}_0, \tilde{q}_1\right]^T = R_{\Theta, m}^2 \left[q_0, q_1\right]^T$
-- 차원 쌍 (2,3)에 $R_{\Theta, m}^2$ 적용: $\left[\tilde{q}_2, \tilde{q}_3\right]^T = R_{\Theta, m}^2 \left[q_2, q_3\right]^T$
+- 차원 쌍 (0,1)에 $R_{\Theta, m}^2$ 적용: $(\tilde{q}_0, \tilde{q}_1)^T = R_{\Theta, m}^2 (q_0, q_1)^T$
+- 차원 쌍 (2,3)에 $R_{\Theta, m}^2$ 적용: $(\tilde{q}_2, \tilde{q}_3)^T = R_{\Theta, m}^2 (q_2, q_3)^T$
 
 이렇게 변환된 query와 key의 내적은 상대적 위치 $(m-n)$에만 의존한다.
 
