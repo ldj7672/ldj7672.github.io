@@ -389,13 +389,17 @@ FlashAttention은 CUDA 커널을 직접 작성하여 다음과 같은 최적화�
 
 ## 3.2 GQA (Grouped Query Attention) & MQA
 
+
+
 <div style="text-align: center;">
   <img src="/figures/large_scale_model/gqa_mqa.png" alt="GQA and MQA Comparison" style="max-width: 100%; height: auto;">
 </div>
 
+표준 Multi-Head Attention (MHA)에서는 각 head마다 독립적인 K, V를 가지므로, 긴 컨텍스트에서 KV cache의 메모리 사용량이 크게 증가한다. 이를 해결하기 위해 **MQA (Multi-Query Attention)**와 **GQA (Grouped Query Attention)**가 제안되었다. 이들은 여러 head가 K, V를 공유함으로써 메모리 사용량을 줄이면서도 추론 속도를 향상시킨다.
+
 $$\text{Memory} = 2 \times N_h \times d_h \times L$$
 
-여기서 $N_h$는 head 수, $d_h$는 head dimension, $L$은 sequence length이다. 표준 Multi-Head Attention (MHA)에서는 각 head마다 독립적인 K, V를 가지므로, KV cache의 메모리 사용량은 위와 같다. 예를 들어, 32 head, head_dim=128, seq_len=32K인 경우 Memory = 2 × 32 × 128 × 32,768 = 약 268MB (FP16 기준)로, 긴 컨텍스트에서 상당한 메모리 부담이 된다.
+여기서 $N_h$는 head 수, $d_h$는 head dimension, $L$은 sequence length이다. 예를 들어, 32 head, head_dim=128, seq_len=32K인 경우 Memory = 2 × 32 × 128 × 32,768 = 약 268MB (FP16 기준)로, 긴 컨텍스트에서 상당한 메모리 부담이 된다.
 
 ### MQA (Multi-Query Attention)
 
